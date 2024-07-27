@@ -33,7 +33,7 @@ This project is a Streamlit-based web application that provides comprehensive an
 2. Install the required packages:
     ```
     $pip install -r requirements.txt
-```
+    ```
 3. Run the Streamlit app:
  ```
     $streamlit run app.py
