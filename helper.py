@@ -105,15 +105,34 @@ def weight_v_height(df,sport):
     else:
         return athlete_df
 
-def men_vs_women(df):
-    athlete_df = df.drop_duplicates(subset=['Name', 'region'])
+# def men_vs_women(df):
+#     athlete_df = df.drop_duplicates(subset=['Name', 'region'])
 
+#     men = athlete_df[athlete_df['Sex'] == 'M'].groupby('Year').count()['Name'].reset_index()
+#     women = athlete_df[athlete_df['Sex'] == 'F'].groupby('Year').count()['Name'].reset_index()
+
+#     final = men.merge(women, on='Year', how='left')
+#     final.rename(columns={'Name_x': 'Male', 'Name_y': 'Female'}, inplace=True)
+
+#     final.fillna(0, inplace=True)
+
+#     return final
+
+def men_vs_women(df, sport='Overall'):
+    athlete_df = df.drop_duplicates(subset=['Name', 'region'])
+    
+    if sport != 'Overall':
+        athlete_df = athlete_df[athlete_df['Sport'] == sport]
+    
     men = athlete_df[athlete_df['Sex'] == 'M'].groupby('Year').count()['Name'].reset_index()
     women = athlete_df[athlete_df['Sex'] == 'F'].groupby('Year').count()['Name'].reset_index()
-
-    final = men.merge(women, on='Year', how='left')
+    
+    final = men.merge(women, on='Year', how='outer')
     final.rename(columns={'Name_x': 'Male', 'Name_y': 'Female'}, inplace=True)
-
+    
     final.fillna(0, inplace=True)
-
+    
+    final['Male'] = final['Male'].astype(int)
+    final['Female'] = final['Female'].astype(int)
+    
     return final

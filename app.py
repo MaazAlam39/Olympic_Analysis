@@ -12,6 +12,7 @@ region_df=pd.read_csv('notebook/noc_regions.csv')
 df=preprocessor.preprocess(df, region_df)
 
 st.sidebar.title("Olympics Analysis")
+st.sidebar.image('https://e7.pngegg.com/pngimages/1020/402/png-clipart-2024-summer-olympics-brand-circle-area-olympic-rings-olympics-logo-text-sport.png')
 st.sidebar.markdown("<h2 style='font-weight:bold;'>Select An Option</h2>", unsafe_allow_html=True)
 user_menu=st.sidebar.radio(
     '',
@@ -180,15 +181,22 @@ if user_menu == 'Athlete-wise Analysis':
     sport_list.sort()
     sport_list.insert(0, 'Overall')
 
-    st.title('Height Vs Weight')
-    selected_sport = st.selectbox('Select a Sport', sport_list)
-    temp_df = helper.weight_v_height(df,selected_sport)
-    fig,ax = plt.subplots()
-    ax = sns.scatterplot(data=temp_df, x='Weight', y='Height', hue='Medal', style='Sex', s=60)
-    st.pyplot(fig)
-
     st.title("Men Vs Women Participation Over the Years")
-    final = helper.men_vs_women(df)
+    
+    # Create a selectbox for choosing Overall or specific sport
+    sport_list = df['Sport'].unique().tolist()
+    sport_list.sort()
+    sport_list.insert(0, 'Overall')
+    
+    selected_sport = st.selectbox('Select a Sport', sport_list, key='gender_analysis_sport')
+    
+    final = helper.men_vs_women(df, sport=selected_sport)
     fig = px.line(final, x="Year", y=["Male", "Female"])
+    
+    if selected_sport == 'Overall':
+        fig.update_layout(title_text='Men vs Women Participation (Overall)', title_x=0.5)
+    else:
+        fig.update_layout(title_text=f'Men vs Women Participation in {selected_sport}', title_x=0.5)
+    
     fig.update_layout(autosize=False, width=800, height=600)
     st.plotly_chart(fig)
